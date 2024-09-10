@@ -1,11 +1,12 @@
 {
   "expo": {
-    "name": "ai-astrologoy",
-    "slug": "ai-astrologoy",
+    "name": "Aistrology",
+    "schema": "aistrology",
+    "slug": "aistrology",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "myapp",
+    "scheme": "aistrology",
     "userInterfaceStyle": "automatic",
     "splash": {
       "image": "./assets/images/splash.png",
@@ -27,7 +28,7 @@
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
-      "expo-router"
+      "expo-router", "expo-font"
     ],
     "experiments": {
       "typedRoutes": true
