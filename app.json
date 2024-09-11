@@ -5,7 +5,7 @@
     "slug": "aistrology",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "",
     "scheme": "aistrology",
     "userInterfaceStyle": "automatic",
     "splash": {
@@ -18,7 +18,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "foregroundImage": "",
         "backgroundColor": "#ffffff"
       }
     },
@@ -28,10 +28,20 @@
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
-      "expo-router", "expo-font"
+      "expo-router",
+      "expo-font"
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "413ecdcc-5e6f-4ecc-a6cd-6139ea8f0cba"
+      }
+    },
+    "owner": "tmpham1"
   }
 }
