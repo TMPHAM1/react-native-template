@@ -5,7 +5,6 @@ import React from 'react'
 import {icons} from '../../constants';
 
 const TabIcon = ({icon, color, name, focused} ) => {
-    console.log('THIS IS ICON', icon)
     return (
         <View className="justify-center items-center gap-2">
             <Image
@@ -33,9 +32,10 @@ const TabsLayout = () => {
                 backgroundColor: '#161622',
                 borderTopWidth: 1,
                 borderTopColor: '#232533',
-                height: 84,
-            }
+                height: 100,
+            },
         }}
+        options={{headerShown: false}}
         >
         <Tabs.Screen 
             name="home"
