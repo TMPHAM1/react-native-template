@@ -1,22 +1,29 @@
-import { View, Text, FlatList, Image, RefreshControl } from 'react-native'
-import React, { useState } from 'react'
+import { View, Text, FlatList, Image, RefreshControl, Alert } from 'react-native'
+import React, { useState, useEffect } from 'react';
+import {getAllPosts} from '../../lib/appwrite'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { images } from '../../constants'
+import useAppwrite from '../../lib/useAppWrite'
 
 import SearchInput from '../../components/SearchInput'
 import Trending from '../../components/Trending'
 import EmptyState from '../../components/EmptyState'
 const Home = () => {
+
+  const {data, refetch} = useAppwrite(getAllPosts)
+  
+  console.log(data);
   const [refreshing, setRefreshing] = useState(false);
   const onRefresh = async () => {
     setRefreshing(true);
+    await refetch();
     // Recall Videos to see if any new videos have appeared
     setRefreshing(false);
   }
   return (
     <SafeAreaView className="bg-primary h-full">
       <FlatList
-        data={[]}
+        data={posts}
         keyExtractor={(item)=> item.$id}
         renderItem={({item})=> (
           <Text className="text-3xl text-white">{item.id}</Text>
@@ -41,7 +48,7 @@ const Home = () => {
     
             <View className="w-full  flex-1  pt-5 pb-8">
   
-              <Trending posts={[] ?? []} />
+              <Trending posts={posts ?? []} />
             </View>
 
 
