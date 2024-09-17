@@ -8,13 +8,10 @@
     "icon": "",
     "scheme": "aistrology",
     "userInterfaceStyle": "automatic",
-    "splash": {
-      "image": "./assets/images/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
-    },
+    "platforms": ["ios", "android", "web"],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.tmpham1.aistrology"
     },
     "android": {
       "adaptiveIcon": {
@@ -29,7 +26,8 @@
     },
     "plugins": [
       "expo-router",
-      "expo-font"
+      "expo-font",
+      "expo-image",
     ],
     "experiments": {
       "typedRoutes": true

@@ -1,6 +1,6 @@
 import { View, Text, FlatList, Image, RefreshControl, Alert } from 'react-native'
 import React, { useState, useEffect } from 'react';
-import {getAllPosts} from '../../lib/appwrite'
+import {getAllPosts, getLatestPosts} from '../../lib/appwrite'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { images } from '../../constants'
 import useAppwrite from '../../lib/useAppWrite'
@@ -8,11 +8,12 @@ import useAppwrite from '../../lib/useAppWrite'
 import SearchInput from '../../components/SearchInput'
 import Trending from '../../components/Trending'
 import EmptyState from '../../components/EmptyState'
+import VideoCard from '../../components/VideoCard';
+import { useGlobalContext } from '../../context/GlobalProvider';
 const Home = () => {
-
-  const {data, refetch} = useAppwrite(getAllPosts)
-  
-  console.log(data);
+  const {user} = useGlobalContext();
+  const {data: posts, refetch} = useAppwrite(getAllPosts);
+  const {data: latestPosts} = useAppwrite(getLatestPosts);
   const [refreshing, setRefreshing] = useState(false);
   const onRefresh = async () => {
     setRefreshing(true);
@@ -26,16 +27,16 @@ const Home = () => {
         data={posts}
         keyExtractor={(item)=> item.$id}
         renderItem={({item})=> (
-          <Text className="text-3xl text-white">{item.id}</Text>
+         <VideoCard video={item}/>
         )}
         ListHeaderComponent={()=>(
-          <View className="my-4 p-4 space-y-6">
-            <View className="justify-between items-start flex-row mb-2">
+          <View className="my-6 px-4 space-y-6">
+            <View className="justify-between items-start flex-row mb-6">
               <View>
               <Text className="font-pmedium text-sm text-gray-100">Welcome Back</Text>
-              <Text className="text-2xl font-psemibold text-white">Tien</Text>
+              <Text className="text-2xl font-psemibold text-white">{user?.username}</Text>
               </View>
-              <View className="mt-1">
+              <View className="mt-1.5">
               <Image
               source={images.logoSmall}
               className="w-9 h-10"
@@ -46,9 +47,9 @@ const Home = () => {
           
             <SearchInput />     
     
-            <View className="w-full  flex-1  pt-5 pb-8">
+            <View className="w-full flex-1  pt-5 pb-8">
   
-              <Trending posts={posts ?? []} />
+              <Trending posts={latestPosts ?? []} />
             </View>
 
 
