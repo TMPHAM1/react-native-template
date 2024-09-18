@@ -2,15 +2,18 @@ import { View, Text, Image, TouchableOpacity } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import { icons } from '../constants';
 import { Video, ResizeMode } from 'expo-av';
-import { setLikedVideo } from '../lib/appwrite';
-import { useGlobalContext } from '../context/GlobalProvider';
+import { setLikedVideo, getCurrentUser } from '../lib/appwrite';
 import Svg, { Path } from 'react-native-svg'
+import useAppwrite from '../lib/useAppWrite';
 import Animated, {useAnimatedStyle, useSharedValue, withSpring,} from 'react-native-reanimated';
 
 
 
 
 const checkVideosLiked = (videosLiked, currentVideoId) => {
+    if (!videosLiked) {
+        return false
+    }
     return videosLiked.some((item)=> {
         return item.$id === currentVideoId
     })
@@ -21,8 +24,8 @@ const VideoCard = ({video:
         creator: {username, avatar}
     }}
 ) => {
-    const {user} = useGlobalContext();
-    const {videos_liked} = user;
+    const {data: user, refetch} = useAppwrite(getCurrentUser);
+    const {videos_liked} = user
 
     const scale = useSharedValue(1);
 

@@ -19,8 +19,18 @@ const TabIcon = ({icon, color, name, focused} ) => {
         </View>
     )
 }
+const router = useRouter();
+const segments = useSegments(); // This hook returns the current route segments
+
+
 
 const TabsLayout = () => {
+    useEffect(() => {
+        if (segments[0] === 'your-tab-route') {
+          // Logic to reload your tab when the route matches your tab
+          reloadTab();
+        }
+      }, [segments]);
   return (
 <>
     <Tabs

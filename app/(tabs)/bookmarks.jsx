@@ -1,14 +1,25 @@
 import { View, Text, FlatList, Image, RefreshControl, Alert } from 'react-native'
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { images } from '../../constants'
 import EmptyState from '../../components/EmptyState'
 import VideoCard from '../../components/VideoCard';
 import { useGlobalContext } from '../../context/GlobalProvider';
+import useAppwrite from '../../lib/useAppWrite';
+import { getCurrentUser } from '../../lib/appwrite';
 const Bookmarks = () => {
-  const {user} = useGlobalContext();
+  const {data: user, refetch} = useAppwrite(getCurrentUser);
   const posts = user.videos_liked;
-
+  const [refreshing, setRefreshing] = useState(false);
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await refetch();
+    // Recall Videos to see if any new videos have appeared
+    setRefreshing(false);
+  }
+  useEffect(()=> {
+    onRefresh();
+  },[])
   return (
     <SafeAreaView className="bg-primary h-full">
       <FlatList
@@ -21,7 +32,7 @@ const Bookmarks = () => {
           <View className="my-6 px-4 space-y-6">
             <View className="justify-between items-start flex-row mb-6">
               <View>
-              <Text className="font-pmedium text-sm text-gray-100">Here are your Bookmarks</Text>
+              <Text className="font-pmedium text-sm text-gray-100">Bookmarks</Text>
               <Text className="text-2xl font-psemibold text-white">{user?.username}</Text>
               </View>
               <View className="mt-1.5">
@@ -38,10 +49,11 @@ const Bookmarks = () => {
   )}
         ListEmptyComponent={()=> (
           <EmptyState
-            title="No Videos Found"
-            subtitle="No videos creaed yet"
+            title="No Bookmarks Found"
+            subtitle="Your bookmarked videos will be found here"
           />
         )}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
       />
     </SafeAreaView>
   )
