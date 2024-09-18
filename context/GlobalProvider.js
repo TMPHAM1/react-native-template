@@ -11,7 +11,7 @@ export const useGlobalContext = () => useContext(GlobalContext);
 
     useEffect(()=> {
          getCurrentUser().then((res)=> {
-            console.log(res);
+    
             if(res) {
                 setIsLoggedIn(true);
                 setUser(res)

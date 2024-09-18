@@ -19,7 +19,7 @@ const zoomOut = {
 
 const TrendingItem = ({activeItem, item}) => {
   const [play, setPlay] = useState(false);  
-  console.log('item.url', item.video)
+  
   const videoRef = useRef(null)
  return (<Animatable.View
     className="mr-5"
@@ -35,7 +35,6 @@ const TrendingItem = ({activeItem, item}) => {
     shouldPlay
     isMuted={false}
     onPlaybackStatusUpdate={(status)=> {
-      console.log('status', status)
       if(status.didJustFinish)
  {
   setPlay(false)
