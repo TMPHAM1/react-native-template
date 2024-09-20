@@ -1,11 +1,10 @@
 import {View, Text, Image} from 'react-native'
-import {Tabs, Redirect} from 'expo-router'
+import {Tabs, Redirect, useSegments, router } from 'expo-router'
 import React from 'react'
 
 import {icons} from '../../constants';
 
 const TabIcon = ({icon, color, name, focused} ) => {
-    console.log('THIS IS ICON', icon)
     return (
         <View className="justify-center items-center gap-2">
             <Image
@@ -21,7 +20,9 @@ const TabIcon = ({icon, color, name, focused} ) => {
     )
 }
 
+
 const TabsLayout = () => {
+ 
   return (
 <>
     <Tabs
@@ -33,9 +34,10 @@ const TabsLayout = () => {
                 backgroundColor: '#161622',
                 borderTopWidth: 1,
                 borderTopColor: '#232533',
-                height: 84,
-            }
+                height: 100,
+            },
         }}
+        options={{headerShown: false}}
         >
         <Tabs.Screen 
             name="home"

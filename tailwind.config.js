@@ -7,7 +7,12 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        primary: '#161622' // Set up tailwind to use primary as a sub class for colors
+        primary: '#161622', // Set up tailwind to use primary as a sub class for colors
+        secondary: {
+          DEFAULT: "#FF9C01",
+          100: "#FF9001",
+          200: "#FF8E01",
+        },
       }
     },
     fontFamily: {
