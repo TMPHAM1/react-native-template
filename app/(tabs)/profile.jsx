@@ -12,7 +12,12 @@ import { router, useLocalSearchParams } from 'expo-router';
 import {useGlobalContext} from '../../context/GlobalProvider'
 import InfoBox from '../../components/InfoBox';
 const Profile = () => {
-  const {user, setUser, setIsLoggedIn} = useGlobalContext();
+  const {user, setUser, setIsLoggedIn, isLoading} = useGlobalContext();
+  if (isLoading) {
+    return <View className="bg-primary h-full w-full justify-center items-center">
+    <ActivityIndicator size="large" color="#ff9001"/>
+  </View>
+  }
   const {query } = useLocalSearchParams(); 
   const {data: posts, refetch} = useAppwrite(()=> getUserPosts(user.$id)); 
   useEffect(()=> {
@@ -36,7 +41,7 @@ const Profile = () => {
         data={posts}
         keyExtractor={(item)=> item.$id}
         renderItem={({item})=> (
-         <VideoCard video={item}/>
+         <VideoCard video={item} onRefresh={onRefresh}/>
         )}
         ListHeaderComponent={()=>(
           <View className="w-full justify-center items-center mt-6 mb-12 px-4">

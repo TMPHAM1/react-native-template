@@ -11,7 +11,7 @@ export const useGlobalContext = () => useContext(GlobalContext);
 
     useEffect(()=> {
          getCurrentUser().then((res)=> {
-    
+            setIsLoading(true)
             if(res) {
                 setIsLoggedIn(true);
                 setUser(res)
@@ -31,6 +31,7 @@ export const useGlobalContext = () => useContext(GlobalContext);
         user,
         setUser,
         isLoading,
+        setIsLoading,
     }}>
     
         {children}

@@ -1,64 +1,79 @@
-import { View, Text, Image, TouchableOpacity } from 'react-native';
+import { View, Text, Image, TouchableOpacity, Alert, TouchableWithoutFeedback } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import { icons } from '../constants';
 import { Video, ResizeMode } from 'expo-av';
-import { setLikedVideo, getCurrentUser } from '../lib/appwrite';
+import { setLikedVideo, getCurrentUser, deleteVideo } from '../lib/appwrite';
 import Svg, { Path } from 'react-native-svg'
 import useAppwrite from '../lib/useAppWrite';
 import Animated, {useAnimatedStyle, useSharedValue, withSpring,} from 'react-native-reanimated';
+import { usePathname } from 'expo-router';
 
 
 
 
-const checkVideosLiked = (videosLiked, currentVideoId) => {
-    if (!videosLiked) {
+const checkVideosLiked = (likes, currentId) => {
+    if (!likes) {
         return false
-    }
-    return videosLiked.some((item)=> {
-        return item.$id === currentVideoId
+    } 
+    return likes.some((item)=> {
+  
+        return item.$id === currentId
     })
 }
 
 const VideoCard = ({video: 
-    {title, thumbnail, video, $id: id,
-        creator: {username, avatar}
-    }}
+    {title, thumbnail, video, $id: id,likes,
+        creator: {username, avatar, $id: creatorId}
+    }, onRefresh}
 ) => {
-    const {data: user, refetch} = useAppwrite(getCurrentUser);
-    const {videos_liked} = user
-
+  const pathname = usePathname();
+    const {data: user} = useAppwrite(getCurrentUser);
     const scale = useSharedValue(1);
-
     // Animated style for the scaling effect
     const animatedStyle = useAnimatedStyle(() => {
       return {
         transform: [{ scale: scale.value }],
       };
     });
-
-    const [liked, setLiked] = useState(checkVideosLiked(videos_liked));
+    const [menuShown, setMenuShown] = useState(false);
+    const [liked, setLiked] = useState(true);
     const [play, setPlay] = useState(false);
 
     useEffect(()=> {
-        const videoLiked = checkVideosLiked(videos_liked, id)
+        const videoLiked = pathname !== '/bookmarks' ? checkVideosLiked(likes, user.$id) : true
         setLiked(videoLiked)
-    }, [videos_liked])
+    }, [user])
 
     const handleLiked = async () => {        
      await setLikedVideo(id, user.$id, !liked)
-
-     scale.value = withSpring(1.5, {}, () => {
+     scale.value = withSpring(1.2, {}, () => {
         scale.value = withSpring(1);
       });
+      if(onRefresh) {
+        onRefresh();
+      }
     setLiked(!liked);
     
     }
 
-
+    const handleDelete = async () => {
+      try {  
+        deleteVideo(id);
+      if (onRefresh) {
+      onRefresh();
+      } }
+      catch(error) {
+        Alert.alert('Error', error);
+      }
+      finally {
+        setMenuShown(false);
+      }
+      
+    } 
   return (
-   
+    <TouchableWithoutFeedback onPress={()=> setMenuShown(false)}>
     <View className="flex-col px-4 mb-14">
-        <View className="flex-row gap-3 items-start">
+        <View className="flex-row gap-3 items-start relative z-10">
             <View className="justify-center items-center flex-row flex-1">
                 <View className="w-[46px] h-[46px] rounded-lg border inline border-secondary justify-center items-center p-0.5">
                     <Image 
@@ -71,8 +86,8 @@ const VideoCard = ({video:
                     <Text className="text-gray-100 text-xs font-psemibold" numberOfLines={1}>{username}</Text>
                 </View>
                 </View>
-                <TouchableOpacity onPress={handleLiked}>
-                <View className="custom-heart">
+              { creatorId !== user.$id  ? (<TouchableOpacity onPress={handleLiked}>
+                <View className="custom-heart pt-2">
                 <Animated.View style={[animatedStyle]}>
                 <Svg
             width={24}
@@ -88,19 +103,29 @@ const VideoCard = ({video:
           </Svg>
         </Animated.View>
                 </View>
-                </TouchableOpacity>
+                </TouchableOpacity>) : null}
                 <View className="pt-2"
                 >
+                {creatorId === user.$id ?   (<TouchableOpacity onPress={()=> setMenuShown(!menuShown)}>
                     <Image 
                     source={icons.menu}
-                    className="w-5 h-5"
+                    className="w-6 h-5 pr-2"
                     resizeMode="contain" />
-                </View>
+                  </TouchableOpacity>):null}
+                </View> 
+                {menuShown? 
+                <View className="absolute -bottom-10 right-5 bg-gray-800 rounded-lg px-4 py-2">
+                    <TouchableOpacity onPress={handleDelete}>
+                    <View className="w-full py-2 hover:bg-slate-400">
+                      <Text className="text-red-600">Delete</Text>
+                    </View>
+                    </TouchableOpacity>
+                </View> : null} 
             </View>
             {
                 play ? (
                     <Video source={{uri: video}} 
-                    className="w-full h-60 rounded-xl mt-"
+                    className="w-full h-60 rounded-lg"
                     resizeMode={ResizeMode.CONTAIN}
                     useNativeControls
                     shouldPlay
@@ -117,11 +142,11 @@ const VideoCard = ({video:
                 ) : <TouchableOpacity
                     activeOpacity={0.7}
                     onPress={()=> setPlay(true)}
-                    className="w-full h-60 rounded-xl mt-3 relative justify-center items-center"
+                    className="w-full h-60 rounded-xl mt-3 z-0 relative justify-center items-center"
                     >
                     <Image
                         source={{uri: thumbnail}}
-                        className="w-full h-full rounded-xl mt-3"
+                        className="w-full h-full rounded-xl mt-3 z-0 relative"
                         resizeMode="cover"
 
 />
@@ -132,6 +157,7 @@ const VideoCard = ({video:
             }
       
     </View>
+    </TouchableWithoutFeedback>
   )
 }
 

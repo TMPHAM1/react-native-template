@@ -4,13 +4,21 @@ import {getAllPosts, getLatestPosts} from '../../lib/appwrite'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { images } from '../../constants'
 import useAppwrite from '../../lib/useAppWrite'
-
+import { usePathname } from 'expo-router';
 import SearchInput from '../../components/SearchInput'
 import Trending from '../../components/Trending'
 import EmptyState from '../../components/EmptyState'
 import VideoCard from '../../components/VideoCard';
 import { useGlobalContext } from '../../context/GlobalProvider';
+
 const Home = () => {
+  const {isLoading, setIsLoading} = useGlobalContext();
+  if (isLoading) {
+    return <View className="bg-primary h-full w-full justify-center items-center">
+    <ActivityIndicator size="large" color="#ff9001"/>
+  </View>
+  }
+  const pathname = usePathname();
   const {user} = useGlobalContext();
   const {data: posts, refetch} = useAppwrite(getAllPosts);
   const {data: latestPosts} = useAppwrite(getLatestPosts);
@@ -22,6 +30,12 @@ const Home = () => {
     // Recall Videos to see if any new videos have appeared
     setRefreshing(false);
   }
+  useEffect(() => {
+    setIsLoading(true)
+    onRefresh();
+    setIsLoading(false)
+
+  }, [pathname]);
   return (
     <SafeAreaView className="bg-primary h-full">
       <FlatList

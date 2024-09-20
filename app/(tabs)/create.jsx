@@ -10,6 +10,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { icons } from '../../constants';
 import { createVideo } from '../../lib/appwrite';
 import { useGlobalContext } from '../../context/GlobalProvider';
+import {router} from 'expo-router'
 
 const Create = () => {
   const { user } = useGlobalContext();
@@ -23,7 +24,7 @@ const Create = () => {
 
   const openPicker = async (selectType) => {
     let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: selectType === 'image' ? ImagePicker.MediaTypeOptions.Image : ImagePicker.MediaTypeOptions.Videos,
+      mediaTypes: selectType === 'image' ? ImagePicker.MediaTypeOptions.Images : ImagePicker.MediaTypeOptions.Videos,
       allowsEditing: false,
       aspect: [4, 3],
       quality: 1,
@@ -62,6 +63,7 @@ const Create = () => {
       thumbail: null,
       prompt: '',
     })
+    setUploading(false);
   }
 
   }
@@ -83,7 +85,7 @@ const Create = () => {
           <View className="mt-7 space-y-2">
             <Text className="text-base text-gray-100 font-pmedium">Upload Video</Text>
           </View>
-          <TouchableOpacity onPress={()=> openPicker('image')}>
+          <TouchableOpacity onPress={()=> openPicker('video')}>
             {form.video ? (<Video 
               source={{uri: form.video.uri}}
               className="w-full h-64 rounded-2xl"
@@ -106,7 +108,7 @@ const Create = () => {
           <View className="mt-7 space-y-2">
           <Text className="text-base text-gray-100 font-pmedium">Thumbnail Image</Text>
           <TouchableOpacity onPress={()=> openPicker('image')}> 
-            {form.thumbnail ? (<image 
+            {form.thumbnail ? (<Image 
               source={{uri: form.thumbnail.uri}}
               className="w-full h-64 rounded-2xl"
               resizeMode="cover"
@@ -127,7 +129,7 @@ const Create = () => {
           </View>
           <FormField
           title="AI Prompt"
-          value={form.title}
+          value={form.prompt}
           placeholder="Enter Prompt used to create this video"
           handleChangeText={(e) => setForm({...form, prompt: e})}
           otherStyles="mt-10"
@@ -138,6 +140,7 @@ const Create = () => {
         containerStyles="mt-7"
         handlePress={submit}
         isLoading={uploading}
+        isLoadingTitle="Uploading..."
       />
     </SafeAreaView>
   )

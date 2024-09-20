@@ -1,4 +1,4 @@
-import { Text, ScrollView, Image, View } from 'react-native'
+import { Text, ScrollView, Image, View, ActivityIndicator } from 'react-native'
 import React from 'react';
 import { Link, Redirect, router } from 'expo-router'
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -13,6 +13,11 @@ import { useGlobalContext } from '@/context/GlobalProvider';
 
 const App = () => {
   const {isLoading, isLoggedIn} = useGlobalContext();
+  if (isLoading) {
+    return <View className="bg-primary h-full w-full justify-center items-center">
+    <ActivityIndicator size="large" color="#ff9001"/>
+  </View>
+  }
   if (!isLoading && isLoggedIn) return <Redirect href="/home" />
 
   return (

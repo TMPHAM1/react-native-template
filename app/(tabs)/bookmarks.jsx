@@ -7,10 +7,23 @@ import VideoCard from '../../components/VideoCard';
 import { useGlobalContext } from '../../context/GlobalProvider';
 import useAppwrite from '../../lib/useAppWrite';
 import { getCurrentUser } from '../../lib/appwrite';
+import { usePathname } from 'expo-router';
 const Bookmarks = () => {
+  const {isLoading, setIsLoading} = useGlobalContext();
+  if (isLoading) {
+    return <View className="bg-primary h-full w-full justify-center items-center">
+    <ActivityIndicator size="large" color="#ff9001"/>
+  </View>
+  }
+  const pathname = usePathname();
   const {data: user, refetch} = useAppwrite(getCurrentUser);
   const posts = user.videos_liked;
   const [refreshing, setRefreshing] = useState(false);
+  useEffect(() => {
+   
+    onRefresh();
+
+  }, [pathname]);
   const onRefresh = async () => {
     setRefreshing(true);
     await refetch();
@@ -18,7 +31,9 @@ const Bookmarks = () => {
     setRefreshing(false);
   }
   useEffect(()=> {
+    setIsLoading(true);
     onRefresh();
+    setIsLoading(false);
   },[])
   return (
     <SafeAreaView className="bg-primary h-full">
@@ -26,7 +41,7 @@ const Bookmarks = () => {
         data={posts}
         keyExtractor={(item)=> item.$id}
         renderItem={({item})=> (
-         <VideoCard video={item}/>
+         <VideoCard video={item} onRefresh={onRefresh}/>
         )}
         ListHeaderComponent={()=>(
           <View className="my-6 px-4 space-y-6">

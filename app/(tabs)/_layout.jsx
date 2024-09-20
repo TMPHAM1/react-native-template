@@ -1,5 +1,5 @@
 import {View, Text, Image} from 'react-native'
-import {Tabs, Redirect} from 'expo-router'
+import {Tabs, Redirect, useSegments, router } from 'expo-router'
 import React from 'react'
 
 import {icons} from '../../constants';
@@ -19,18 +19,10 @@ const TabIcon = ({icon, color, name, focused} ) => {
         </View>
     )
 }
-const router = useRouter();
-const segments = useSegments(); // This hook returns the current route segments
-
 
 
 const TabsLayout = () => {
-    useEffect(() => {
-        if (segments[0] === 'your-tab-route') {
-          // Logic to reload your tab when the route matches your tab
-          reloadTab();
-        }
-      }, [segments]);
+ 
   return (
 <>
     <Tabs

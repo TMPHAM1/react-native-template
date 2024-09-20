@@ -2,7 +2,7 @@ import { View, Text, TouchableOpacity } from 'react-native'
 import React from 'react'
 import { isLoading } from 'expo-font'
 
-const CustomButton = ({title, handlePress, containerStyles, textStyles, isLoading }) => {
+const CustomButton = ({title, handlePress, containerStyles, textStyles, isLoading, isLoadingTitle }) => {
   return (
     <TouchableOpacity 
     onPress={handlePress}
@@ -10,7 +10,9 @@ const CustomButton = ({title, handlePress, containerStyles, textStyles, isLoadin
     className={`bg-secondary rounded-xl min-h-[62px] justify-center items-center ${containerStyles} ${isLoading ? 'opacity-50' : ''}`}
     disabled={isLoading}
     >
-        <Text className={`text-primary font-psemibold text-lg ${textStyles}`}>{title}</Text>
+        <Text className={`text-primary font-psemibold text-lg ${textStyles}`}>
+          
+          {isLoadingTitle && isLoading ? isLoadingTitle : title}</Text>
     </TouchableOpacity>)
 }
 
